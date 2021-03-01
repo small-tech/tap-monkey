@@ -23,25 +23,25 @@ node test.js | npx tap-monkey
 Or, as a test task in your _package.json_ file:
 
 ```json
-"scripts" : [
+"scripts" : {
   "test": "node test.js | tap-monkey"
-]
+}
 ```
 
 Or, if you have more than one test file:
 
 ```json
-"scripts" : [
+"scripts" : {
   "test": "tape test/**/*js | tap-monkey"
-]
+}
 ```
 
 Or, if you want to run code coverage (e.g., using [c8]()):
 
 ```json
-"scripts" : [
+"scripts" : {
   "test": "c8 tape test/**/*js | tap-monkey"
-]
+}
 ```
 
 ## Like this? Fund us!
