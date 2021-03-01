@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import Ora from 'ora'
 import chalk from 'chalk'
 import { performance } from 'perf_hooks'
