@@ -10,8 +10,6 @@ Displays test runner status using a static single-line spinner (hint: it’s a m
 
 Use it like [tap-spec](https://github.com/scottcorgan/tap-spec) for running regular tests and also like [tap-nyc](https://github.com/MegaArman/tap-nyc) for running coverage with [c8](https://github.com/bcoe/c8) or [nyc](https://github.com/istanbuljs/nyc).
 
-![Screenshot of Tap Monkey running coverage with a lovely coverage report surrounded by a single-line border with rounded corners drawn using box drawing characters.](https://small-tech.org/images/tap-monkey.png)
-
 ## Install
 
 ```sh
@@ -42,6 +40,8 @@ Or, if you have more than one test file:
 }
 ```
 
+![Screenshot of Tap Monkey running coverage with a lovely coverage report surrounded by a single-line border with rounded corners drawn using box drawing characters.](https://small-tech.org/images/tap-monkey.png)
+
 Or, if you want to run code coverage (e.g., using [c8]()):
 
 ```json
@@ -49,6 +49,10 @@ Or, if you want to run code coverage (e.g., using [c8]()):
   "test": "c8 tape test/**/*js | tap-monkey"
 }
 ```
+
+Note that while passing tests are displayed ephemerally in the status line, failed tests are always written in full to the terminal.
+
+![Screenshot of Tap Monkey showing a failed test. Full test details, including a stack trace are shown. At the end are the aggregate statistics.](https://small-tech.org/images/tap-monkey-failed-test.png)
 
 ## Like this? Fund us!
 
