@@ -4,6 +4,8 @@
 
 A [tap](https://testanything.org/) formatter that’s also a monkey.
 
+Displays test runner status using a static single-line spinner (hint: it’s a monkey) and only fills your screen with text on failures and with your coverage report.
+
 Use it like [tap-spec](https://github.com/scottcorgan/tap-spec) for running regular tests and also like [tap-nyc](https://github.com/MegaArman/tap-nyc) for running coverage with [c8](https://github.com/bcoe/c8) or [nyc](https://github.com/istanbuljs/nyc).
 
 ## Install
