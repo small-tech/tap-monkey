@@ -2,6 +2,8 @@
 
 ## 🍌️🐒️
 
+<img src='https://small-tech.org/images/tap-monkey.gif' width='807px'>
+
 A [tap](https://testanything.org/) formatter that’s also a monkey.
 
 Displays test runner status using a static single-line spinner (hint: it’s a monkey) and only fills your screen with text on failures and with your coverage report.
