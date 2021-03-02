@@ -18,6 +18,8 @@ npm i @small-tech/tap-monkey
 
 ## Use
 
+### Tests
+
 Pipe your tap test output to tap-monkey (e.g., if your _test.js_ file contains [tape](https://github.com/substack/tape) tests):
 
 ```sh
@@ -40,9 +42,13 @@ Or, if you have more than one test file:
 }
 ```
 
+### Code coverage
+
 ![Screenshot of Tap Monkey running coverage with a lovely coverage report surrounded by a single-line border with rounded corners drawn using box drawing characters.](https://small-tech.org/images/tap-monkey.png)
 
-Or, if you want to run code coverage (e.g., using [c8]()):
+Use Tap Monkey for code coverage in exactly the same way as you do for your tests.
+
+e.g., using [c8](https://github.com/bcoe/c8):
 
 ```json
 "scripts" : {
@@ -50,9 +56,15 @@ Or, if you want to run code coverage (e.g., using [c8]()):
 }
 ```
 
-Note that while passing tests are displayed ephemerally in the status line, failed tests are always written in full to the terminal.
+
+
+## Test failures
 
 ![Screenshot of Tap Monkey showing a failed test. Full test details, including a stack trace are shown. At the end are the aggregate statistics.](https://small-tech.org/images/tap-monkey-failed-test.png)
+
+While passing tests are displayed ephemerally in the status line so as not to fill up your terminal window with unnecessary information, failed tests are always written in full to the terminal.
+
+(When running tests, we don’t care about passing tests, only failing ones.)
 
 ## Like this? Fund us!
 
