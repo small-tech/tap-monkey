@@ -2,6 +2,8 @@
   "name": "@small-tech/tap-monkey",
   "version": "1.0.0",
   "description": "A tap formatter that’s also a monkey.",
+  "keywords": ["tap", "formatter", "tape", "nyc", "c8", "test anything protocol"],
+  "license": "ISC",
   "main": "index.js",
   "type": "module",
   "bin": {
@@ -10,13 +12,17 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["tap", "formatter", "tape", "nyc", "c8", "test anything protocol"],
   "author": {
     "name": "Aral Balkan",
     "email": "aral@small-tech.org",
     "url": "https://ar.al"
   },
-  "license": "ISC",
+  "homepage": "https://github.com/small-tech/tap-monkey",
+  "bugs": "https://github.com/small-tech/tap-monkey/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/small-tech/tap-monkey.git"
+  },
   "dependencies": {
     "@small-tech/tap-out": "^3.1.0",
     "chalk": "^4.1.0",
