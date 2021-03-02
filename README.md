@@ -44,7 +44,7 @@ Or, if you have more than one test file:
 
 ### Code coverage
 
-![Screenshot of Tap Monkey running coverage with a lovely coverage report surrounded by a single-line border with rounded corners drawn using box drawing characters.](https://small-tech.org/images/tap-monkey.png)
+![Screenshot of Tap Monkey running coverage with a lovely coverage report surrounded by a single-line border with rounded corners drawn using box drawing characters.](https://small-tech.org/images/tap-monkey-coverage.png)
 
 Use Tap Monkey for code coverage in exactly the same way as you do for your tests.
 
@@ -55,8 +55,6 @@ e.g., using [c8](https://github.com/bcoe/c8):
   "test": "c8 tape test/**/*js | tap-monkey"
 }
 ```
-
-
 
 ## Test failures
 
