@@ -1,8 +1,8 @@
-# tap-monkey
+# Tap Monkey
 
 ## 🍌️🐒️
 
-<img src='https://small-tech.org/images/tap-monkey.gif' width='807px'>
+![Screencast of Tap Monkey in action. Terminal window. Command: npm -s test. Progress of tests being run is shown by a single-line animation of the emoji monkey heads alternating between see no evil, hear no evil, speak no evil poses as the titles of test collections being run and passing tests are shown alongside. At the end, an emoji banana is shown next to “All tests passing. Total: 163. Passing 163. Failing 0. Duration 14.19 secs.](https://small-tech.org/images/tap-monkey.gif)
 
 A [tap](https://testanything.org/) formatter that’s also a monkey.
 
