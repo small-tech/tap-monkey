@@ -1,5 +1,17 @@
 #!/usr/bin/env node
 
+//////////////////////////////////////////////////////////////////////////////////////////
+//
+// A tap formatter that’s also a monkey.
+//
+// Displays test runner status using a static single-line spinner (hint: it’s a monkey)
+// and only fills your screen with text on failures and with your coverage report.
+//
+// Copyright ⓒ 2021 Aral Balkan, Small Technology Foundation
+// License: ISC
+//
+//////////////////////////////////////////////////////////////////////////////////////////
+
 import Ora from 'ora'
 import chalk from 'chalk'
 import { performance } from 'perf_hooks'
@@ -7,6 +19,10 @@ import tapOut from '@small-tech/tap-out'
 
 let hasFailures = false
 
+// Due to the 300ms frame duration of the monkey animation, not every
+// status update we receive about new test suites and test passes will be
+// reflected in the spinner text and that’s ok. Failures, of course, are
+// all output in full to the terminal.
 const indentedMonkey = {
   "interval": 300,
   "frames": [
@@ -31,18 +47,11 @@ const startTime = performance.now()
 let printingCoverage = false
 let coverageBorderCount = 0
 let currentTest = ''
-let testStatusNoticePrinted = false
 
-// Only print coverage unless there’s an error.
 parser.on('test', test => {
   spinner.start()
-
   currentTest = test.name
   spinner.text = `Running ${chalk.underline(currentTest)} tests`
-})
-
-parser.on('assert', assert => {
-  // spinner.text = `Running ${chalk.underline(currentTest)} tests (${assert.number})`
 })
 
 parser.on('pass', assert => {
@@ -50,6 +59,7 @@ parser.on('pass', assert => {
 })
 
 parser.on('fail', assert => {
+  // Stop the spinner and output failures in full.
   hasFailures = true
   spinner.stop()
 
@@ -73,12 +83,16 @@ parser.on('fail', assert => {
 
 parser.on('comment', comment => {
   let commentText = comment.raw
-  if (!printingCoverage) {
-    printingCoverage = true
-    spinner.stop()
-  }
 
   if (commentText.startsWith('----')) {
+    // We take the first comment that includes a border to signal the
+    // start of the coverage section and stop the spinner permanently
+    // from there on.
+    if (!printingCoverage) {
+      printingCoverage = true
+      spinner.stop()
+    }
+
     coverageBorderCount++
     switch(coverageBorderCount) {
       case 1: commentText = `╭─${commentText.replace(/\-\|\-/g, '─┬─')}─╮`; break
@@ -90,7 +104,13 @@ parser.on('comment', comment => {
     commentText = `│ ${commentText} │`
   }
 
-  console.log(commentText.replace(/\|/g, '│').replace(/\-/g, '─'))
+  if (printingCoverage) {
+    console.log(commentText.replace(/\|/g, '│').replace(/\-/g, '─'))
+  } else {
+    // We haven’t started printing coverage yet so this must be some other TAP comment.
+    // Display it in the status line.
+    spinner.text = commentText
+  }
 })
 
 parser.on('output', results => {
