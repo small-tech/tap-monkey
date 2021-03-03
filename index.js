@@ -19,6 +19,12 @@ import tapOut from '@small-tech/tap-out'
 
 let hasFailures = false
 
+// The formatter has a --quiet option that stops status updates being
+// printed until there is a failure or until the aggregate statistics is
+// being shown. People using screenreaders and other assistive technologies
+// might want to use this if the number of status updates becomes overwhelming.
+let quiet = (process.argv.length === 3 && process.argv[2] === '--quiet')
+
 // Due to the 300ms frame duration of the monkey animation, not every
 // status update we receive about new test suites and test passes will be
 // reflected in the spinner text and that’s ok. Failures, of course, are
@@ -36,7 +42,7 @@ const indentedMonkey = {
 const spinner = new Ora({
     spinner: indentedMonkey,
     discardStdin: false,
-    text: 'Running tests'
+    text: 'Running tests…'
 })
 
 const parser = tapOut()
@@ -50,12 +56,16 @@ let currentTest = ''
 
 parser.on('test', test => {
   spinner.start()
-  currentTest = test.name
-  spinner.text = `Running ${chalk.underline(currentTest)} tests`
+  if (!quiet) {
+    currentTest = test.name
+    spinner.text = `Running ${chalk.underline(currentTest)} tests`
+  }
 })
 
 parser.on('pass', assert => {
-  spinner.text = `${chalk.green('✔')} ${assert.name}`
+  if (!quiet) {
+    spinner.text = `${chalk.green('✔')} ${assert.name}`
+  }
 })
 
 parser.on('fail', assert => {
