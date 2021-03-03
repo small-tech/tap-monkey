@@ -21,7 +21,7 @@ let hasFailures = false
 
 // The formatter has a --quiet option that stops status updates being
 // printed until there is a failure or until the aggregate statistics is
-// being shown. People using screenreaders and other assistive technologies
+// being shown. People using screen readers and other assistive technologies
 // might want to use this if the number of status updates becomes overwhelming.
 let quiet = (process.argv.length === 3 && process.argv[2] === '--quiet')
 

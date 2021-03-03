@@ -10,7 +10,7 @@ Quiet monkey.
 
 ### Added
 
-  - `--quiet` option: when passed, only an initial notice is shown that tests are running and no futher updates are given unless there are failures or until the final summary and/or coverage report are shown. This might help folks using assistive devices like screen readers who might otherwise get overwhelmed by notifications of running/passing tests as well as anyone else who wants a generally calmer monkey.
+  - `--quiet` option: when passed, only an initial notice is shown that tests are running and no further updates are given unless there are failures or until the final summary and/or coverage report are shown. This might help folks using assistive devices like screen readers who might otherwise get overwhelmed by notifications of running/passing tests as well as anyone else who wants a generally calmer monkey.
 
 ## [1.0.0] - 2021-03-02
 

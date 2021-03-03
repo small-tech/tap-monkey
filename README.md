@@ -50,7 +50,7 @@ For a quieter monkey, use the `--quiet` flag. e.g.,
 }
 ```
 
-When this flag is passed, only an initial notice is shown that tests are running and no futher updates are given unless there are failures or until the final summary and/or coverage report are shown.
+When this flag is passed, only an initial notice is shown that tests are running and no further updates are given unless there are failures or until the final summary and/or coverage report are shown.
 
 This is a general accessibility and usability feature. It might help folks using assistive devices like screen readers who might otherwise get overwhelmed by notifications of running/passing tests as well as anyone else who wants a generally calmer monkey.
 
