@@ -40,6 +40,8 @@ Or, if you have more than one test file:
 }
 ```
 
+## Accessibility
+
 For a quieter monkey, use the `--quiet` flag. e.g.,
 
 ```json
@@ -52,7 +54,7 @@ When this flag is passed, only an initial notice is shown that tests are running
 
 This is a general accessibility and usability feature. It might help folks using assistive devices like screen readers who might otherwise get overwhelmed by notifications of running/passing tests as well as anyone else who wants a generally calmer monkey.
 
-### Code coverage
+## Code coverage
 
 ![Screenshot of Tap Monkey running coverage with a lovely coverage report surrounded by a single-line border with rounded corners drawn using box drawing characters.](https://small-tech.org/images/tap-monkey-coverage.png)
 
