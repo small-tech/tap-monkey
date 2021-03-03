@@ -1,8 +1,8 @@
 {
   "name": "@small-tech/tap-monkey",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A tap formatter that’s also a monkey.",
-  "keywords": ["tap", "formatter", "tape", "nyc", "c8", "test anything protocol"],
+  "keywords": ["tap", "formatter", "tape", "nyc", "c8", "test anything protocol", "accessible", "a11y"],
   "license": "ISC",
   "main": "index.js",
   "type": "module",
