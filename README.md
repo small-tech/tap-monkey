@@ -18,8 +18,6 @@ npm i @small-tech/tap-monkey
 
 ## Use
 
-### Tests
-
 Pipe your tap test output to tap-monkey (e.g., if your _test.js_ file contains [tape](https://github.com/substack/tape) tests):
 
 ```sh
@@ -41,6 +39,18 @@ Or, if you have more than one test file:
   "test": "tape test/**/*js | tap-monkey"
 }
 ```
+
+For a quieter monkey, use the `--quiet` flag. e.g.,
+
+```json
+"scripts" : {
+  "test": "tape test/**/*js | tap-monkey --quiet"
+}
+```
+
+When this flag is passed, only an initial notice is shown that tests are running and no futher updates are given unless there are failures or until the final summary and/or coverage report are shown.
+
+This is a general accessibility and usability feature. It might help folks using assistive devices like screen readers who might otherwise get overwhelmed by notifications of running/passing tests as well as anyone else who wants a generally calmer monkey.
 
 ### Code coverage
 
