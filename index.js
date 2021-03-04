@@ -91,6 +91,15 @@ parser.on('fail', assert => {
   spinner.start()
 })
 
+parser.on('bailOut', event => {
+  // If the test runner has emitted a bail out event, it has signaled
+  // that it cannot continue. So we notify the person and exit.
+  spinner.stop()
+  console.error(chalk.red(event.raw))
+  console.error()
+  process.exit(1)
+})
+
 parser.on('comment', comment => {
   let commentText = comment.raw
 
