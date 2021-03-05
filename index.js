@@ -101,34 +101,32 @@ parser.on('bailOut', event => {
 })
 
 parser.on('comment', comment => {
+  spinner.stop()
   let commentText = comment.raw
 
-  if (commentText.startsWith('----')) {
-    // We take the first comment that includes a border to signal the
-    // start of the coverage section and stop the spinner permanently
-    // from there on.
-    if (!printingCoverage) {
-      printingCoverage = true
-      spinner.stop()
-    }
-
-    coverageBorderCount++
-    switch(coverageBorderCount) {
-      case 1: commentText = `╭─${commentText.replace(/\-\|\-/g, '─┬─')}─╮`; break
-      case 2: commentText = `├─${commentText.replace(/\-\|\-/g, '─┼─')}─┤`; break
-      case 3: commentText = `╰─${commentText.replace(/\-\|\-/g, '─┴─')}─╯\n`; break
-      default: throw new Error('Too many borders found in coverage. Panic!')
-    }
-  } else {
-    commentText = `│ ${commentText} │`
-  }
+  const isCoverageBorder = commentText.startsWith('----')
+  if (isCoverageBorder) { printingCoverage = true }
 
   if (printingCoverage) {
+    if (isCoverageBorder) {
+      coverageBorderCount++
+      switch(coverageBorderCount) {
+        case 1: commentText = `╭─${commentText.replace(/\-\|\-/g, '─┬─')}─╮`; break
+        case 2: commentText = `├─${commentText.replace(/\-\|\-/g, '─┼─')}─┤`; break
+        case 3: commentText = `╰─${commentText.replace(/\-\|\-/g, '─┴─')}─╯\n`; break
+        default: throw new Error('Too many borders found in coverage. Panic!')
+      }
+    } else {
+      // Printing coverage but this line isn’t a border, just surround it with vertical borders.
+      commentText = `│ ${commentText} │`
+    }
+    // Replace any inner borders that there might be with proper box-drawing characters.
     console.log(commentText.replace(/\|/g, '│').replace(/\-/g, '─'))
   } else {
-    // We haven’t started printing coverage yet so this must be some other TAP comment.
-    // Display it in the status line.
-    spinner.text = commentText
+    // We aren’t printing coverage yet so this must be a regular TAP comment.
+    // Display it fully.
+    console.log(chalk.yellow('   🢂 '),commentText.trim())
+    spinner.start()
   }
 })
 
