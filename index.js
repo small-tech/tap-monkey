@@ -84,9 +84,11 @@ parser.on('fail', assert => {
 
   console.log()
 
-  e.stack.split('\n').forEach(line => {
-    console.log(' ', chalk.gray(line))
-  })
+  if (e.stack !== undefined) {
+    e.stack.split('\n').forEach(line => {
+      console.log(' ', chalk.gray(line))
+    })
+  }
 
   spinner.start()
 })
