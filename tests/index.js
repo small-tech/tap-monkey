@@ -69,6 +69,24 @@ console.log = _log
 assert(output[0].includes('TypeError: Cannot convert undefined or null to object'), 'output includes main error message')
 assert(output[2].includes('~/Projects/nodekit/node_modules/tape-promise/node_modules/onetime/index.js:30:12'), 'error location shown')
 
+// TODO: Add a mock assertion failure also.
+
+//
+// Bail out handler tests.
+//
+
+// TODO
+
+//
+// Comment handler tests.
+//
+
+//
+// Output handler tests.
+//
+
+// TODO
+
 console.log('All tests passed.')
 process.exit()
 
