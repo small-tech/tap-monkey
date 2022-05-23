@@ -16,6 +16,7 @@ import Ora from 'ora'
 import chalk from 'chalk'
 import { performance } from 'perf_hooks'
 import tapOut from '@small-tech/tap-out'
+import os from 'os'
 
 let hasFailures = false
 
@@ -54,7 +55,13 @@ let printingCoverage = false
 let coverageBorderCount = 0
 let currentTest = ''
 
-parser.on('test', test => {
+const passHandler = (assert => {
+  if (!quiet) {
+    spinner.text = `${chalk.green('✔')} ${assert.name}`
+  }
+})
+
+const testHandler = (test => {
   spinner.start()
   if (!quiet) {
     currentTest = test.name
@@ -62,13 +69,7 @@ parser.on('test', test => {
   }
 })
 
-parser.on('pass', assert => {
-  if (!quiet) {
-    spinner.text = `${chalk.green('✔')} ${assert.name}`
-  }
-})
-
-parser.on('fail', assert => {
+const failHandler = (assert => {
   // Stop the spinner and output failures in full.
   hasFailures = true
   spinner.stop()
@@ -80,18 +81,18 @@ parser.on('fail', assert => {
   if (e.operator !== undefined) console.log(`  operator:`, e.operator)
   if (e.expected !== undefined) console.log(`  ${chalk.green(`expected: ${e.expected}`)}`)
   if (e.actual !== undefined)   console.log(`  ${chalk.red(`actual  : ${e.actual}`)}`)
-  if (e.at !== undefined)       console.log(`  ${chalk.yellow(`at      : ${e.at}`)}`)
+  if (e.at !== undefined)       console.log(`  ${chalk.yellow(`at      : ${e.at.file.replace(os.homedir(), '~')}:${e.at.line}:${e.at.character}`)}`)
 
   console.log()
 
   e.stack.split('\n').forEach(line => {
-    console.log(' ', chalk.gray(line))
+    console.log(' ', chalk.red(line))
   })
 
   spinner.start()
 })
 
-parser.on('bailOut', event => {
+const bailOutHandler = (event => {
   // If the test runner has emitted a bail out event, it has signaled
   // that it cannot continue. So we notify the person and exit.
   spinner.stop()
@@ -100,7 +101,7 @@ parser.on('bailOut', event => {
   process.exit(1)
 })
 
-parser.on('comment', comment => {
+const commentHandler = (comment => {
   spinner.stop()
   let commentText = comment.raw
 
@@ -130,7 +131,7 @@ parser.on('comment', comment => {
   }
 })
 
-parser.on('output', results => {
+const outputHandler = (results => {
   const duration = ((performance.now() - startTime)/1000).toFixed(2)
   spinner.stop()
 
@@ -150,3 +151,12 @@ parser.on('output', results => {
   console.log(chalk.red(  `  Failing   ${failing}`))
   console.log(chalk.gray( `  Duration  ${duration} secs`))
 })
+
+parser.on('test', testHandler)
+parser.on('pass', passHandler)
+parser.on('fail', failHandler)
+parser.on('bailOut', bailOutHandler)
+parser.on('comment', commentHandler)
+parser.on('output', outputHandler)
+
+export default { testHandler, passHandler, failHandler, bailOutHandler, commentHandler, outputHandler, parser, spinner, quiet }
