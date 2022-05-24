@@ -64,13 +64,12 @@ test('pass handler', t => {
 
 test('fail handler', t => {
   // Capture console log temporarily.
-  const _log = console.log
-  const output = []
-  console.log = string => {
-    output.push(string)
-  }
+  const originalConsoleLog = console.log
+  let output = ''
+  const capturedConsoleLog = (...args) => output += args.join(' ')
+  console.log = capturedConsoleLog
 
-  const mockAssert = {
+  const mockAssertionWithTypeError = {
     type: 'assert',
     raw: 'not ok 2 TypeError: Cannot convert undefined or null to object',
     ok: false,
@@ -102,12 +101,66 @@ test('fail handler', t => {
     test: 10
   }
 
-  tapMonkey.failHandler(mockAssert)
+  tapMonkey.failHandler(mockAssertionWithTypeError)
   tapMonkey.spinner.stop()
-  console.log = _log
+  console.log = originalConsoleLog
 
-  t.true(output[0].includes('TypeError: Cannot convert undefined or null to object'), 'output includes main error message')
-  t.true(output[2].includes('~/Projects/nodekit/node_modules/tape-promise/node_modules/onetime/index.js:30:12'), 'error location shown')
+  t.true(output.includes('TypeError: Cannot convert undefined or null to object'), 'output includes main error message')
+  t.true(output.includes('~/Projects/nodekit/node_modules/tape-promise/node_modules/onetime/index.js:30:12'), 'error location shown')
+  
+  // Test a regular assertion failure.
+  
+  output = ''
+  console.log = capturedConsoleLog
+  
+  const regularFailedAssertion = {
+    type: 'assert',
+    raw: 'not ok 8 quiet mode should not display passed tests',
+    ok: false,
+    number: 8,
+    name: 'quiet mode should not display passed tests',
+    error: {
+      operator: 'ok',
+      expected: 'true',
+      actual: 'false',
+      at: undefined,
+      stack: 'Error: quiet mode should not display passed tests\n' +
+        'at Test.assert [as _assert] (/var/home/aral/Projects/tap-monkey/node_modules/tape/lib/test.js:314:54)\n' +
+        'at Test.bound [as _assert] (/var/home/aral/Projects/tap-monkey/node_modules/tape/lib/test.js:99:32)\n' +
+        'at Test.assert (/var/home/aral/Projects/tap-monkey/node_modules/tape/lib/test.js:433:10)\n' +
+        'at Test.bound [as true] (/var/home/aral/Projects/tap-monkey/node_modules/tape/lib/test.js:99:32)\n' +
+        'at Test.<anonymous> (file:///var/home/aral/Projects/tap-monkey/tests/index.js:50:9)\n' +
+        'at Test.bound [as _cb] (/var/home/aral/Projects/tap-monkey/node_modules/tape/lib/test.js:99:32)\n' +
+        'at Test.run (/var/home/aral/Projects/tap-monkey/node_modules/tape/lib/test.js:117:31)\n' +
+        'at Test.bound [as run] (/var/home/aral/Projects/tap-monkey/node_modules/tape/lib/test.js:99:32)\n' +
+        'at Immediate.next [as _onImmediate] (/var/home/aral/Projects/tap-monkey/node_modules/tape/lib/results.js:88:19)\n' +
+        'at processImmediate (node:internal/timers:466:21)\n',
+      raw: '    operator: ok\n' +
+        '    expected: true\n' +
+        '    actual:   false\n' +
+        '    stack: |-\n' +
+        'Error: quiet mode should not display passed tests\n' +
+        'at Test.assert [as _assert] (/var/home/aral/Projects/tap-monkey/node_modules/tape/lib/test.js:314:54)\n' +
+        'at Test.bound [as _assert] (/var/home/aral/Projects/tap-monkey/node_modules/tape/lib/test.js:99:32)\n' +
+        'at Test.assert (/var/home/aral/Projects/tap-monkey/node_modules/tape/lib/test.js:433:10)\n' +
+        'at Test.bound [as true] (/var/home/aral/Projects/tap-monkey/node_modules/tape/lib/test.js:99:32)\n' +
+        'at Test.<anonymous> (file:///var/home/aral/Projects/tap-monkey/tests/index.js:50:9)\n' +
+        'at Test.bound [as _cb] (/var/home/aral/Projects/tap-monkey/node_modules/tape/lib/test.js:99:32)\n' +
+        'at Test.run (/var/home/aral/Projects/tap-monkey/node_modules/tape/lib/test.js:117:31)\n' +
+        'at Test.bound [as run] (/var/home/aral/Projects/tap-monkey/node_modules/tape/lib/test.js:99:32)\n' +
+        'at Immediate.next [as _onImmediate] (/var/home/aral/Projects/tap-monkey/node_modules/tape/lib/results.js:88:19)\n' +
+        'at processImmediate (node:internal/timers:466:21)'
+    },
+    test: 2
+  }
+  
+  tapMonkey.failHandler(regularFailedAssertion)
+  tapMonkey.spinner.stop()
+  console.log = originalConsoleLog
+  
+  t.true(output.includes('operator: ok'), 'output should include operator')
+  t.true(output.includes('expected: true'), 'output should include expected field')
+  t.true(output.includes('actual  : false'), 'output should include actual field')
 
   t.end()
 })
