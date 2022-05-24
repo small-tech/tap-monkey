@@ -188,6 +188,11 @@ test('comment handler', t => {
   // Assertions.
   t.equals(output.trim(), expectedCoverageOutput, 'formatted coverage output is correct')
   
+  // Test too many borders in coverage error.
+  t.throws(() => {
+    tapMonkey.commentHandler({ raw: coverageTap[0] })
+  }, 'too many borders in coverage output error should throw')
+  
   t.end()
 })
 
