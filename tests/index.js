@@ -173,6 +173,3 @@ test('comment handler', t => {
 
 // TODO
 
-// console.log('All tests passed.')
-// process.exit()
-
