@@ -93,6 +93,7 @@ test('fail handler', t => {
 //
 
 test('bailout handler', t => {
+  // Setup.
   const _error = console.error
   let output = ''
   console.error = string => output += string
@@ -101,6 +102,7 @@ test('bailout handler', t => {
   let exitCalledWithCorrectCode = false
   process.exit = code => exitCalledWithCorrectCode = true
 
+  // Test.
   tapMonkey.spinner.start()
   const mockRaw = 'mock raw event contents'
   tapMonkey.bailOutHandler({ raw: mockRaw })
@@ -119,6 +121,51 @@ test('bailout handler', t => {
 //
 // Comment handler tests.
 //
+
+test('comment handler', t => {
+  // Setup.
+  const originalConsoleLog = console.log
+  const capturedConsoleLog = (...args) => output += args.join(' ')
+
+  console.log = capturedConsoleLog
+  let output = ''
+
+  // Test regular comment.
+  const regularCommentPrefix = '   🢂 '
+  const regularComment = 'a regular comment'
+
+  tapMonkey.commentHandler({ raw: regularComment })
+  tapMonkey.spinner.stop()
+  console.log = originalConsoleLog
+
+  t.equals(output, `${regularCommentPrefix} ${regularComment}`, 'regular comment is formatted correctly')
+  
+  // Test coverage comments.
+  output = ''
+  console.log = capturedConsoleLog
+  
+  const coverageTap = [
+    '----------|---------|----------|---------|---------|-----------------------',
+    '   File   | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s     ',
+    '----------|---------|----------|---------|---------|-----------------------',
+    'All files |   70.37 |    71.42 |      50 |   70.37 |                       ',
+    ' index.js |   70.37 |    71.42 |      50 |   70.37 | 59-61,105-131,135-152 ',
+    '----------|---------|----------|---------|---------|-----------------------'
+  ]
+  
+  const expectedCoverageOutput = '╭───────────┬─────────┬──────────┬─────────┬─────────┬────────────────────────╮│    File   │ % Stmts │ % Branch │ % Funcs │ % Lines │ Uncovered Line #s      │├───────────┼─────────┼──────────┼─────────┼─────────┼────────────────────────┤│ All files │   70.37 │    71.42 │      50 │   70.37 │                        ││  index.js │   70.37 │    71.42 │      50 │   70.37 │ 59─61,105─131,135─152  │╰───────────┴─────────┴──────────┴─────────┴─────────┴────────────────────────╯'
+  
+  coverageTap.forEach(line => {
+    tapMonkey.commentHandler({ raw: line })
+  })
+  tapMonkey.spinner.stop()
+  console.log = originalConsoleLog
+  
+  // Assertions.
+  t.equals(output.trim(), expectedCoverageOutput, 'formatted coverage output is correct')
+  
+  t.end()
+})
 
 //
 // Output handler tests.

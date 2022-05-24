@@ -104,7 +104,7 @@ const bailOutHandler = (event => {
 const commentHandler = (comment => {
   spinner.stop()
   let commentText = comment.raw
-
+  
   const isCoverageBorder = commentText.startsWith('----')
   if (isCoverageBorder) { printingCoverage = true }
 
@@ -126,7 +126,7 @@ const commentHandler = (comment => {
   } else {
     // We aren’t printing coverage yet so this must be a regular TAP comment.
     // Display it fully.
-    console.log(chalk.yellow('   🢂 '),commentText.trim())
+    console.log(chalk.yellow('   🢂 '), commentText.trim())
     spinner.start()
   }
 })
