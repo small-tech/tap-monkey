@@ -1,6 +1,5 @@
 import test from 'tape'
 import tapMonkey from '../index.js'
-import assert from 'assert'
 import strip from 'strip-ansi'
 
 // Since Tap Monkey pipes stdin, this will leave a handle open.
@@ -93,7 +92,29 @@ test('fail handler', t => {
 // Bail out handler tests.
 //
 
-// TODO
+test('bailout handler', t => {
+  const _error = console.error
+  let output = ''
+  console.error = string => output += string
+  
+  const _exit = process.exit
+  let exitCalledWithCorrectCode = false
+  process.exit = code => exitCalledWithCorrectCode = true
+
+  tapMonkey.spinner.start()
+  const mockRaw = 'mock raw event contents'
+  tapMonkey.bailOutHandler({ raw: mockRaw })
+  
+  t.strictEquals(tapMonkey.spinner.isSpinning, false, 'spinner has stopped')
+  t.true(output.includes(mockRaw), 'output includes mock event raw string')
+  t.true(exitCalledWithCorrectCode, 'exit is called')
+  
+  // Tear down.
+  console.error = _error
+  process.exit = _exit
+  
+  t.end()
+})
 
 //
 // Comment handler tests.
