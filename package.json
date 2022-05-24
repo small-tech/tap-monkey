@@ -19,7 +19,8 @@
     "tap-monkey": "./index.js"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tape tests/index.js | node index.js",
+    "coverage": "c8 tape tests/index.js | node index.js"
   },
   "author": {
     "name": "Aral Balkan",
@@ -36,5 +37,10 @@
     "@small-tech/tap-out": "^3.2.0",
     "chalk": "^4.1.0",
     "ora": "^5.3.0"
+  },
+  "devDependencies": {
+    "c8": "^7.11.3",
+    "strip-ansi": "^7.0.1",
+    "tape": "^5.5.3"
   }
 }

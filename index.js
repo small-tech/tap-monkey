@@ -16,14 +16,15 @@ import Ora from 'ora'
 import chalk from 'chalk'
 import { performance } from 'perf_hooks'
 import tapOut from '@small-tech/tap-out'
-
-let hasFailures = false
+import os from 'os'
 
 // The formatter has a --quiet option that stops status updates being
 // printed until there is a failure or until the aggregate statistics is
 // being shown. People using screen readers and other assistive technologies
 // might want to use this if the number of status updates becomes overwhelming.
-let quiet = (process.argv.length === 3 && process.argv[2] === '--quiet')
+export const context = {
+  quiet: (process.argv.length === 3 && process.argv[2] === '--quiet')
+}
 
 // Due to the 300ms frame duration of the monkey animation, not every
 // status update we receive about new test suites and test passes will be
@@ -54,23 +55,22 @@ let printingCoverage = false
 let coverageBorderCount = 0
 let currentTest = ''
 
-parser.on('test', test => {
+const passHandler = (assert => {
+  if (!context.quiet) {
+    spinner.text = `${chalk.green('✔')} ${assert.name}`
+  }
+})
+
+const testHandler = (test => {
   spinner.start()
-  if (!quiet) {
+  if (!context.quiet) {
     currentTest = test.name
     spinner.text = `Running ${chalk.underline(currentTest)} tests`
   }
 })
 
-parser.on('pass', assert => {
-  if (!quiet) {
-    spinner.text = `${chalk.green('✔')} ${assert.name}`
-  }
-})
-
-parser.on('fail', assert => {
+const failHandler = (assert => {
   // Stop the spinner and output failures in full.
-  hasFailures = true
   spinner.stop()
 
   const e = assert.error
@@ -80,18 +80,18 @@ parser.on('fail', assert => {
   if (e.operator !== undefined) console.log(`  operator:`, e.operator)
   if (e.expected !== undefined) console.log(`  ${chalk.green(`expected: ${e.expected}`)}`)
   if (e.actual !== undefined)   console.log(`  ${chalk.red(`actual  : ${e.actual}`)}`)
-  if (e.at !== undefined)       console.log(`  ${chalk.yellow(`at      : ${e.at}`)}`)
+  if (e.at !== undefined)       console.log(`  ${chalk.yellow(`at      : ${e.at.file.replace(os.homedir(), '~')}:${e.at.line}:${e.at.character}`)}`)
 
   console.log()
 
   e.stack.split('\n').forEach(line => {
-    console.log(' ', chalk.gray(line))
+    console.log(' ', chalk.red(line))
   })
 
   spinner.start()
 })
 
-parser.on('bailOut', event => {
+const bailOutHandler = (event => {
   // If the test runner has emitted a bail out event, it has signaled
   // that it cannot continue. So we notify the person and exit.
   spinner.stop()
@@ -100,10 +100,10 @@ parser.on('bailOut', event => {
   process.exit(1)
 })
 
-parser.on('comment', comment => {
+const commentHandler = (comment => {
   spinner.stop()
   let commentText = comment.raw
-
+  
   const isCoverageBorder = commentText.startsWith('----')
   if (isCoverageBorder) { printingCoverage = true }
 
@@ -125,12 +125,12 @@ parser.on('comment', comment => {
   } else {
     // We aren’t printing coverage yet so this must be a regular TAP comment.
     // Display it fully.
-    console.log(chalk.yellow('   🢂 '),commentText.trim())
+    console.log(chalk.yellow('   🢂 '), commentText.trim())
     spinner.start()
   }
 })
 
-parser.on('output', results => {
+const outputHandler = (results => {
   const duration = ((performance.now() - startTime)/1000).toFixed(2)
   spinner.stop()
 
@@ -138,7 +138,9 @@ parser.on('output', results => {
   const passing = results.pass.length
   const failing = results.fail.length
 
-  if (hasFailures) {
+  // TODO: Handle edge case of zero total tests.
+  
+  if (failing > 0) {
     console.log(`  🙊️ ${chalk.magenta('There are failed tests.')}`)
   } else {
     console.log(`  🍌️ ${chalk.green('All tests passing!')}`)
@@ -150,3 +152,13 @@ parser.on('output', results => {
   console.log(chalk.red(  `  Failing   ${failing}`))
   console.log(chalk.gray( `  Duration  ${duration} secs`))
 })
+
+parser.on('test', testHandler)
+parser.on('pass', passHandler)
+parser.on('fail', failHandler)
+parser.on('bailOut', bailOutHandler)
+parser.on('comment', commentHandler)
+parser.on('output', outputHandler)
+
+export default { testHandler, passHandler, failHandler, bailOutHandler, commentHandler, outputHandler, parser, spinner }
+
