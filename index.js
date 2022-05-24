@@ -22,7 +22,9 @@ import os from 'os'
 // printed until there is a failure or until the aggregate statistics is
 // being shown. People using screen readers and other assistive technologies
 // might want to use this if the number of status updates becomes overwhelming.
-let quiet = (process.argv.length === 3 && process.argv[2] === '--quiet')
+export const context = {
+  quiet: (process.argv.length === 3 && process.argv[2] === '--quiet')
+}
 
 // Due to the 300ms frame duration of the monkey animation, not every
 // status update we receive about new test suites and test passes will be
@@ -54,14 +56,14 @@ let coverageBorderCount = 0
 let currentTest = ''
 
 const passHandler = (assert => {
-  if (!quiet) {
+  if (!context.quiet) {
     spinner.text = `${chalk.green('✔')} ${assert.name}`
   }
 })
 
 const testHandler = (test => {
   spinner.start()
-  if (!quiet) {
+  if (!context.quiet) {
     currentTest = test.name
     spinner.text = `Running ${chalk.underline(currentTest)} tests`
   }
@@ -158,4 +160,5 @@ parser.on('bailOut', bailOutHandler)
 parser.on('comment', commentHandler)
 parser.on('output', outputHandler)
 
-export default { testHandler, passHandler, failHandler, bailOutHandler, commentHandler, outputHandler, parser, spinner, quiet }
+export default { testHandler, passHandler, failHandler, bailOutHandler, commentHandler, outputHandler, parser, spinner }
+

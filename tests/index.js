@@ -1,5 +1,6 @@
 import test from 'tape'
 import tapMonkey from '../index.js'
+import { context } from '../index.js'
 import strip from 'strip-ansi'
 
 // Since Tap Monkey pipes stdin, this will leave a handle open.
@@ -16,20 +17,43 @@ test.onFinish(() => {
 //
 
 test('test handler', t => {
-  // Setup.
-  tapMonkey.quiet = false
+  context.quiet = false
   tapMonkey.testHandler({name: 'mock'})
   tapMonkey.spinner.stop()
 
-  // First, a few general tests.
   t.strictEquals(tapMonkey.spinner._spinner.interval, 300, 'spinner interval is as expected')
   t.strictEquals(tapMonkey.spinner._spinner.frames[0], '  🙈 ', 'animation frame 1 is correct')
   t.strictEquals(tapMonkey.spinner._spinner.frames[1], '  🙈 ', 'animation frame 2 is correct')
   t.strictEquals(tapMonkey.spinner._spinner.frames[2], '  🙉 ', 'animation frame 3 is correct')
   t.strictEquals(tapMonkey.spinner._spinner.frames[3], '  🙊 ', 'animation frame 4 is correct')
 
-  // Then the testHandler() test.
   t.true(strip(tapMonkey.spinner.text).includes('Running mock tests'), 'test name is displayed correctly')
+  
+  context.quiet = true
+  tapMonkey.testHandler({name: 'quiet mock'})
+  tapMonkey.spinner.stop()
+  
+  t.false(strip(tapMonkey.spinner.text).includes('Running quiet mock tests'), 'test name not displayed in quiet mode')
+    
+  t.end()
+})
+
+//
+// Pass handler tests.
+//
+
+test('pass handler', t => {
+  // Quiet passes (the default)
+  context.quiet = true
+  const quietPass = 'a quiet pass'
+  tapMonkey.passHandler({ name: quietPass })
+  t.false(tapMonkey.spinner.text.includes(quietPass), 'quiet mode should not display passed tests')
+  
+  // Loud passes.
+  context.quiet = false
+  const loudPass = 'a loud pass'
+  tapMonkey.passHandler({ name: loudPass })
+  t.true(tapMonkey.spinner.text.includes(loudPass), 'passed tests should display when quiet mode is off')
   
   t.end()
 })
