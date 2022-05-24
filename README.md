@@ -107,6 +107,22 @@ export default function log (...args) {
 
 If your test runner (e.g., [ESM Tape Runner](https://github.com/small-tech/esm-tape-runner)) encounters an error in your app’s source code (e.g., a syntax error in one of your classes), it should bail out (and hopefully also log the error so you know what it is). Tap Monkey will respond to bail out events by displaying them and exiting (your test runner should have exit also so you should not get any pipe errors).
 
+## Testing Tap Monkey
+
+Tap Monkey itself, of course, comes with unit tests displayed by none other than _\*drumroll\*_ Tap Monkey!
+
+### Run tests
+
+```shell
+npm run -s test
+```
+
+### Run coverage
+
+```shell
+npm run -s coverage
+```
+
 ## Like this? Fund us!
 
 [Small Technology Foundation](https://small-tech.org) is a tiny, independent not-for-profit.
