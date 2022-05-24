@@ -100,7 +100,7 @@ test('bailout handler', t => {
   
   const _exit = process.exit
   let exitCalledWithCorrectCode = false
-  process.exit = code => exitCalledWithCorrectCode = true
+  process.exit = code => exitCalledWithCorrectCode = code === 1
 
   // Test.
   tapMonkey.spinner.start()
@@ -171,5 +171,43 @@ test('comment handler', t => {
 // Output handler tests.
 //
 
-// TODO
+test ('output handler', t => {
+  const vacuumPack = string => string.replace(/\s/g, '')
+  const originalConsoleLog = console.log
+  const capturedConsoleLog = (...args) => output += args.join(' ')
+
+  console.log = capturedConsoleLog
+  let output = ''
+  
+  // Test: all tests passing.
+
+  const mockAllTestsPassingResults = {
+    asserts: [1, 2, 3],
+    pass: [1, 2, 3],
+    fail: [] 
+  }  
+
+  tapMonkey.outputHandler(mockAllTestsPassingResults)
+  console.log = originalConsoleLog
+
+  t.strictEquals(tapMonkey.spinner.isSpinning, false, 'spinner has stopped')
+  t.true(vacuumPack(output).includes('Alltestspassing!Total3Passing3Failing0'))
+  
+  // Test: failing tests.
+  
+  output = ''
+  console.log = capturedConsoleLog
+  
+  const mockFailingTests = {
+    asserts: [1, 2, 3],
+    pass: [1],
+    fail: [2, 3] 
+  }
+  
+  tapMonkey.outputHandler(mockFailingTests)
+  console.log = originalConsoleLog
+  
+  t.true(vacuumPack(output).includes('Therearefailedtests.Total3Passing1Failing2'))
+  t.end()
+})
 

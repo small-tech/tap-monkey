@@ -18,8 +18,6 @@ import { performance } from 'perf_hooks'
 import tapOut from '@small-tech/tap-out'
 import os from 'os'
 
-let hasFailures = false
-
 // The formatter has a --quiet option that stops status updates being
 // printed until there is a failure or until the aggregate statistics is
 // being shown. People using screen readers and other assistive technologies
@@ -71,7 +69,6 @@ const testHandler = (test => {
 
 const failHandler = (assert => {
   // Stop the spinner and output failures in full.
-  hasFailures = true
   spinner.stop()
 
   const e = assert.error
@@ -139,7 +136,9 @@ const outputHandler = (results => {
   const passing = results.pass.length
   const failing = results.fail.length
 
-  if (hasFailures) {
+  // TODO: Handle edge case of zero total tests.
+  
+  if (failing > 0) {
     console.log(`  🙊️ ${chalk.magenta('There are failed tests.')}`)
   } else {
     console.log(`  🍌️ ${chalk.green('All tests passing!')}`)
